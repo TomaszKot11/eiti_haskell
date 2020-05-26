@@ -30,8 +30,8 @@ enumerate = zip [0..]
 transformuj_wspolczynniki :: [[Integer]] -> [(Integer, Integer, Integer)]
 transformuj_wspolczynniki wspolczynniki = [(y, x, tile) | (y, row) <- enumerate wspolczynniki, (x, tile) <- enumerate row, tile /= 0]
 
--- funcka dla zadanych wspolczynnikow (bedacych outputem f. transformuj_wspolczynniki)
--- generuje permutacje (funckja generuj_macierze dla zadanej kombinacji pierwszego wektora - wiersza)
+-- funcka dla zadanych wspolczynnikow generuje permutacje 
+-- (funckja generuj_macierze dla zadanej kombinacji pierwszego wektora - wiersza)
 -- pierwszego wiersza (wektora). Uruchamia ona równiez "pętle" sprawdzaj_permutacje_pierwszefgo_weektora.
 generuj_poczarkowe_permutajce n wspl = do 
                                         sprawdzaj_permutacje_pierwszego_weektora permutacje wspl
@@ -54,7 +54,8 @@ generuj_macierze_dla_wektora wektor wspl = do
                                             sprawdzaj_macierze_dla_wektora macierze wspl
                                             where macierze = generuj_macierze wektor
 
--- "petla" uruchamiajaca właściwy mechanizm sprawdzania - f. piramidy_rek. 
+-- "petla" uruchamiajaca właściwy mechanizm sprawdzania - f. piramidy_rek.
+-- dla kazdej macierzy oraz ich wspolczynnikow. 
 sprawdzaj_macierze_dla_wektora :: [[[Integer]]] -> [[Integer]] -> IO ()
 sprawdzaj_macierze_dla_wektora [] _ = do
                                        print("Koniec 2")
@@ -80,19 +81,27 @@ piramidy_rek wspl macierz poprzednie = do
                                         print ""
                                         piramidy_rek wspl_new macierz czy_spelnia
 
+-- sprawdzenie czy wektor jest posorotwany rosnaca - te dwie funckjie mogłyby zostać
+-- zapisane jako jedna
 isSorted :: (Ord a) => [a] -> Bool
 isSorted xs = all id . map (\(x,y) -> x < y) . zip xs $ tail xs
-
+-- sprawdzenie czy wektor jest posorotwany malejąco
 isSorted' :: (Ord a) => [a] -> Bool
 isSorted' xs = all id . map(\(x, y) -> x > y) . zip xs $ tail xs
 
+-- funckja dokonująca wyboru odpowiedniego wektora (wiersza/kolumny w prawidłowej/odwrotnej kolejności)
+-- do sprawdzenia na podstawie przekazanej krotki.
 wybierz_bazujac_na_warunku :: (Integer, Integer, Integer) -> [[Integer]] -> (Integer, Integer, Integer, [Integer])
 wybierz_bazujac_na_warunku (x, y, el) matrix | x == 0 = (el,x , y, (transpose matrix !! fromIntegral(y)))
                                              | x == 1 = (el, x, y, (reverse(matrix !! fromIntegral(y))))
                                              | x == 2 = (el, x, y, (reverse(transpose matrix !! fromIntegral(y))))
                                              | otherwise = (el, x, y, ((matrix !! fromIntegral(y))))
 
-
+-- funkcja sprawdzajaca czy dany wektor dla zadanej kroki spelnia warunek.
+-- Wyznacza nastepujace przypadki:
+-- 1. el == 1 tzn wymagana widocznosc jednej wiezy, sprawdzamy czy pierwszy element jest rowny wymiarowi macierzy (n)
+-- 2. el == n sprawdzamy czy wektor jest posortowany
+-- 3. 0 < el < n uruchamiamy funckje sprawdz_roznice_wysokosci_dwa opisana ponizej 
 sprawdz_czy_spelnia_warunek :: (Integer, Integer, Integer, [Integer]) -> Bool
 sprawdz_czy_spelnia_warunek (el, x, y, lista) | el == 1 && not(fromIntegral(head(lista)) == n) = False
                                         | el == 1 = True
@@ -103,11 +112,20 @@ sprawdz_czy_spelnia_warunek (el, x, y, lista) | el == 1 && not(fromIntegral(head
                            where n = length lista
                                  glowka = head lista
 
-sprawdz_roznice_wysokosci_dwa :: Integer -> Integer -> Integer -> [Integer] -> Bool 
+-- funckaj pomocnicza dla sprawdz_roznice_wysokosci_dwa zwracajaca krotke bedaca
+-- postaci (nowy_counter_dlugosci_rosnacego_ciagu, nowy_element_maksymalny)
+-- w zaleznosci od tego czy biezacy element (x) jest wiekszy od poprzedniego
+-- najwiekszego elementu (maxi)
 zwroc_nowy_counter_i_maxi :: Integer -> Integer -> Integer -> (Integer, Integer)
 zwroc_nowy_counter_i_maxi x counter maxi | x >= maxi = (counter + 1, x)
                                          | otherwise = (counter, maxi)
 
+-- funkcja szuka dlugosci rosnacego ciagu w wektorze zaczynajac od pierwszego elementu
+-- w nastepiujacy sposob:
+-- na poczatku najwiekszy element to po prostu 1 element z wektora, a dlugosc (counter) to 1
+-- nastepnie szukamy wystapienia pierwszego wiekszego elementu (jesli taki jest) i podmieniamy element maksymalny oraz
+-- zwiekszamy counter
+sprawdz_roznice_wysokosci_dwa :: Integer -> Integer -> Integer -> [Integer] -> Bool 
 sprawdz_roznice_wysokosci_dwa ele counter maxi [] = counter == ele
 sprawdz_roznice_wysokosci_dwa ele counter maxi (x:xs) = do 
                                                     let iks = zwroc_nowy_counter_i_maxi x counter maxi
