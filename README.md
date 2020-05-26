@@ -1,1 +1,1 @@
-<a href="https://www.wydawnictwologi.pl/index.php?_route_=piramida">Zagadka</a>
+Rozwiazanie zagadki w jezyku Haskell: <a href="https://www.wydawnictwologi.pl/index.php?_route_=piramida">Zagadka</a>

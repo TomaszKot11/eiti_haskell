@@ -3,6 +3,9 @@ import System.IO
 import Data.Traversable
 import System.Exit (exitSuccess)
 
+
+-- uruchomienie calego algorytmu w jednym miejscu 
+uruchom n wspl = generuj_poczatkowe_permutajce n wspl
 -- Rozwiazanie opiera się na fakcie, ze macierze spelniajace warunki postawionego problemu nie moga
 -- posiadac zarowno w danym wieerszu jak i kolumnie dwóch takich samych elementów.
 -- Po przeszukaniu sieci Internet autor znalazł, ze sa to tzw. macierze łacińskie, za których
@@ -33,7 +36,7 @@ transformuj_wspolczynniki wspolczynniki = [(y, x, tile) | (y, row) <- enumerate 
 -- funcka dla zadanych wspolczynnikow generuje permutacje 
 -- (funckja generuj_macierze dla zadanej kombinacji pierwszego wektora - wiersza)
 -- pierwszego wiersza (wektora). Uruchamia ona równiez "pętle" sprawdzaj_permutacje_pierwszefgo_weektora.
-generuj_poczarkowe_permutajce n wspl = do 
+generuj_poczatkowe_permutajce n wspl = do 
                                         sprawdzaj_permutacje_pierwszego_wektora permutacje wspl
                                         where permutacje = permutations [x | x <- [1..n]]
 -- Funkcja bedaca "petla" ktora w petli dla kazdego wektora generuje jego macierze, po czym uruchamia
