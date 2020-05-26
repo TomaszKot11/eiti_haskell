@@ -3,17 +3,16 @@ import System.IO
 import Data.Traversable
 import System.Exit (exitSuccess)
 
--- -- TODO: zmienic ta implementacje
-findLatinSqs :: (Eq a) => [a] -> [[[a]]]
-findLatinSqs xs = findLatinSqs' 1 [xs] where
+generuj_macierze :: (Eq a) => [a] -> [[[a]]]
+generuj_macierze xs = generuj_macierze' 1 [xs] where
     n = length xs
-    findLatinSqs' i rows
+    generuj_macierze' i rows
         | i == n    = [reverse rows]
-        | otherwise = concat [findLatinSqs' (i+1) (row:rows)
-                             | row <- findRows (transpose rows) [] xs]
-    findRows (col:cols) ls rs = concat [findRows cols (r:ls) (delete r rs)
+        | otherwise = concat [generuj_macierze' (i+1) (row:rows)
+                             | row <- znajdz_wiersze (transpose rows) [] xs]
+    znajdz_wiersze (col:cols) ls rs = concat [znajdz_wiersze cols (r:ls) (delete r rs)
                                     | r <- rs, r `notElem` col]
-    findRows [] ls _ = [reverse ls]
+    znajdz_wiersze [] ls _ = [reverse ls]
 
 enumerate = zip [0..]
 
@@ -38,7 +37,7 @@ sprawdzaj_permutacje_pierwszego_weektora perm wspl = do
 
 generuj_macierze_dla_wektora wektor wspl = do
                                             sprawdzaj_macierze_dla_wektora macierze wspl
-                                            where macierze = findLatinSqs wektor
+                                            where macierze = generuj_macierze wektor
 
 
 sprawdzaj_macierze_dla_wektora :: [[[Integer]]] -> [[Integer]] -> IO ()
