@@ -30,32 +30,35 @@ enumerate = zip [0..]
 transformuj_wspolczynniki :: [[Integer]] -> [(Integer, Integer, Integer)]
 transformuj_wspolczynniki wspolczynniki = [(y, x, tile) | (y, row) <- enumerate wspolczynniki, (x, tile) <- enumerate row, tile /= 0]
 
+-- funcka dla zadanych wspolczynnikow (bedacych outputem f. transformuj_wspolczynniki)
+-- generuje permutacje (funckja generuj_macierze dla zadanej kombinacji pierwszego wektora - wiersza)
+-- pierwszego wiersza (wektora). Uruchamia ona równiez "pętle" sprawdzaj_permutacje_pierwszefgo_weektora.
 generuj_poczarkowe_permutajce n wspl = do 
                                         sprawdzaj_permutacje_pierwszego_weektora permutacje wspl
                                         where permutacje = permutations [x | x <- [1..n]]
-
+-- Funkcja bedaca "petla" ktora w petli dla kazdego wektora generuje jego macierze, po czym uruchamia
+-- funckje sprawdzajaca taka macierz.
 sprawdzaj_permutacje_pierwszego_weektora :: [[Integer]] -> [[Integer]] -> IO ()
-
 sprawdzaj_permutacje_pierwszego_weektora [] _ = do 
                                                  print("Koniec")
-                                                 return ()
+                                                 return ()                                       
 sprawdzaj_permutacje_pierwszego_weektora perm wspl = do 
                                                       let ele = head perm
                                                           elem = delete ele perm
                                                       generuj_macierze_dla_wektora ele wspl
                                                       sprawdzaj_permutacje_pierwszego_weektora elem wspl
 
-
+-- funckja generujaca macierze dla zadanego pierwszego wiersza. Analogicznie jak generuj_poczatkowe_permutajce
+-- uruchamia ona "petle" sprawdzania czy dana macierz zgodna jest z "opisem wspolczynnikow".
 generuj_macierze_dla_wektora wektor wspl = do
                                             sprawdzaj_macierze_dla_wektora macierze wspl
                                             where macierze = generuj_macierze wektor
 
-
+-- "petla" uruchamiajaca właściwy mechanizm sprawdzania - f. piramidy_rek. 
 sprawdzaj_macierze_dla_wektora :: [[[Integer]]] -> [[Integer]] -> IO ()
 sprawdzaj_macierze_dla_wektora [] _ = do
                                        print("Koniec 2")
                                        return ()
-
 sprawdzaj_macierze_dla_wektora macierze wspl = do 
                                                 let ele = head macierze
                                                     elem = delete ele macierze
