@@ -3,6 +3,11 @@ import System.IO
 import Data.Traversable
 import System.Exit (exitSuccess)
 
+-- Rozwiazanie opiera się na fakcie, ze macierze spelniajace warunki postawionego problemu nie moga
+-- posiadac zarowno w danym wieerszu jak i kolumnie dwóch takich samych elementów.
+-- Po przeszukaniu sieci Internet autor znalazł, ze sa to tzw. macierze łacińskie, za których
+-- generacje w projekcie odpowiedzialna jest funkcja generuj_macierze. Nazwy funckji są po polsku, mimo ze 
+-- normlanie autor preferuje nazwy angielskie, z racji na chęć zapewnienia większej przejrzystości rozwiązania.
 generuj_macierze :: (Eq a) => [a] -> [[[a]]]
 generuj_macierze xs = generuj_macierze' 1 [xs] where
     n = length xs
@@ -14,8 +19,14 @@ generuj_macierze xs = generuj_macierze' 1 [xs] where
                                     | r <- rs, r `notElem` col]
     znajdz_wiersze [] ls _ = [reverse ls]
 
+-- Funkcja pomocnicza słuzaca wygenerowaniu odpowiednich krotek (ang. tuple) sluzacych do wyznaczenia
+-- krotek postaci (indeks_wiersza, indeks_kolumny, wartosc) w funkcji transformuj_wspolczynniki.
 enumerate = zip [0..]
 
+-- Funckja słuzaca zaindeksowaniu macierzy tak by kazdy z jej elementów (będący finalnie krotką) miał postać
+-- (indeks_wiersza, indeks_kolumny, wartosc)
+-- Przykładowe wejście: [[1, 2, 3, 4]]
+-- Przykładowe wyjście: [(0,0,1),(0,1,2),(0,2,3),(0,3,4)]
 transformuj_wspolczynniki :: [[Integer]] -> [(Integer, Integer, Integer)]
 transformuj_wspolczynniki wspolczynniki = [(y, x, tile) | (y, row) <- enumerate wspolczynniki, (x, tile) <- enumerate row, tile /= 0]
 
