@@ -67,6 +67,13 @@ sprawdzaj_macierze_dla_wektora macierze wspl = do
                                                 piramidy_rek trans ele True
                                                 sprawdzaj_macierze_dla_wektora elem wspl
 
+-- funckja dokonujaca dla zadanego wektora krotek opisow "wspolczynnikow" oraz macierzy
+-- oceny czy spelnia ona  opis wspolczynnikow - jesli nie (ostatni pattern matching _ _ False)
+-- zwraca napis "nie spelnia" bedacy jednoczesnie oznaczeniem ze program "zyje" i cos liczy
+-- jesli sprawdzono wszystkie wspolczynniki (2 pattern matching) wypisywane jest rozwiazanie
+-- i celem zaosczedzenia czasu program konczy dzialanie wyjatkiem exitSuccess
+-- Pierwszy pattern matching dotyczy sytuacji gdy sprawdzono wszystkie wspolczynniki a koncowo
+-- uzyskano wartosc False
 piramidy_rek :: [(Integer, Integer, Integer)] -> [[Integer]] -> Bool -> IO ()
 piramidy_rek [] macierz False = print "nie spelnia"
 piramidy_rek [] macierz _ = do 
