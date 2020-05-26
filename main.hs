@@ -34,19 +34,19 @@ transformuj_wspolczynniki wspolczynniki = [(y, x, tile) | (y, row) <- enumerate 
 -- (funckja generuj_macierze dla zadanej kombinacji pierwszego wektora - wiersza)
 -- pierwszego wiersza (wektora). Uruchamia ona równiez "pętle" sprawdzaj_permutacje_pierwszefgo_weektora.
 generuj_poczarkowe_permutajce n wspl = do 
-                                        sprawdzaj_permutacje_pierwszego_weektora permutacje wspl
+                                        sprawdzaj_permutacje_pierwszego_wektora permutacje wspl
                                         where permutacje = permutations [x | x <- [1..n]]
 -- Funkcja bedaca "petla" ktora w petli dla kazdego wektora generuje jego macierze, po czym uruchamia
 -- funckje sprawdzajaca taka macierz.
-sprawdzaj_permutacje_pierwszego_weektora :: [[Integer]] -> [[Integer]] -> IO ()
-sprawdzaj_permutacje_pierwszego_weektora [] _ = do 
+sprawdzaj_permutacje_pierwszego_wektora :: [[Integer]] -> [[Integer]] -> IO ()
+sprawdzaj_permutacje_pierwszego_wektora [] _ = do 
                                                  print("Koniec")
                                                  return ()                                       
-sprawdzaj_permutacje_pierwszego_weektora perm wspl = do 
+sprawdzaj_permutacje_pierwszego_wektora perm wspl = do 
                                                       let ele = head perm
                                                           elem = delete ele perm
                                                       generuj_macierze_dla_wektora ele wspl
-                                                      sprawdzaj_permutacje_pierwszego_weektora elem wspl
+                                                      sprawdzaj_permutacje_pierwszego_wektora elem wspl
 
 -- funckja generujaca macierze dla zadanego pierwszego wiersza. Analogicznie jak generuj_poczatkowe_permutajce
 -- uruchamia ona "petle" sprawdzania czy dana macierz zgodna jest z "opisem wspolczynnikow".
@@ -114,18 +114,18 @@ sprawdz_czy_spelnia_warunek (el, x, y, lista) | el == 1 && not(fromIntegral(head
                                         | el == 1 = True
                                         | fromIntegral(el) == n && (not(isSorted lista) && not(isSorted' lista)) = False
                                         | fromIntegral(el) == n = True
-                                        | not(sprawdz_roznice_wysokosci_dwa el 0 glowka lista) = False
+                                        | not(sprawdz_roznice_wysokosci_dwa el 0 glowa lista) = False
                                         | otherwise = True
                            where n = length lista
-                                 glowka = head lista
+                                 glowa = head lista
 
 -- funckaj pomocnicza dla sprawdz_roznice_wysokosci_dwa zwracajaca krotke bedaca
 -- postaci (nowy_counter_dlugosci_rosnacego_ciagu, nowy_element_maksymalny)
 -- w zaleznosci od tego czy biezacy element (x) jest wiekszy od poprzedniego
--- najwiekszego elementu (maxi)
-zwroc_nowy_counter_i_maxi :: Integer -> Integer -> Integer -> (Integer, Integer)
-zwroc_nowy_counter_i_maxi x counter maxi | x >= maxi = (counter + 1, x)
-                                         | otherwise = (counter, maxi)
+-- najwiekszego elementu (max)
+zwroc_nowy_counter_i_max :: Integer -> Integer -> Integer -> (Integer, Integer)
+zwroc_nowy_counter_i_max x counter max | x >= max = (counter + 1, x)
+                                       | otherwise = (counter, max)
 
 -- funkcja szuka dlugosci rosnacego ciagu w wektorze zaczynajac od pierwszego elementu
 -- w nastepiujacy sposob:
@@ -133,10 +133,10 @@ zwroc_nowy_counter_i_maxi x counter maxi | x >= maxi = (counter + 1, x)
 -- nastepnie szukamy wystapienia pierwszego wiekszego elementu (jesli taki jest) i podmieniamy element maksymalny oraz
 -- zwiekszamy counter
 sprawdz_roznice_wysokosci_dwa :: Integer -> Integer -> Integer -> [Integer] -> Bool 
-sprawdz_roznice_wysokosci_dwa ele counter maxi [] = counter == ele
-sprawdz_roznice_wysokosci_dwa ele counter maxi (x:xs) = do 
-                                                    let iks = zwroc_nowy_counter_i_maxi x counter maxi
+sprawdz_roznice_wysokosci_dwa ele counter max [] = counter == ele
+sprawdz_roznice_wysokosci_dwa ele counter max (x:xs) = do 
+                                                    let iks = zwroc_nowy_counter_i_max x counter max
                                                         new_counter = fst iks
-                                                        new_maxi = snd iks
-                                                    sprawdz_roznice_wysokosci_dwa ele new_counter new_maxi xs
+                                                        new_max = snd iks
+                                                    sprawdz_roznice_wysokosci_dwa ele new_counter new_max xs
 
